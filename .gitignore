@@ -6,3 +6,4 @@ eclimd.log
 !*/lib/*
 !*/.project
 !*/.classpath
+.DS_Store
