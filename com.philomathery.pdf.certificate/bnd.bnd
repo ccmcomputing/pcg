@@ -26,6 +26,15 @@ Service-Component: META-INF/certificateFactory.xml,META-INF/certificateRenderer.
 # OSGi DS
 Import-Package: org.osgi.framework, *
 
+# Embed required packages from Maven dependencies into this bundle, but
+# exclude our own packages, OSGi API, and JDK namespaces
+-conditionalpackage: \
+  !com.philomathery.* ,\
+  !org.osgi.* ,\
+  !java.* ,\
+  !javax.* ,\
+  *
+
 # Baselining: compare with last release when available
 -baseline: *;\
   ignore=minor
