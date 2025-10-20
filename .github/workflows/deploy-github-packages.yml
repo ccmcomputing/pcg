@@ -40,9 +40,14 @@ jobs:
           </settings>
           EOF
 
+      - name: Set version from tag
+        id: set-rev
+        run: |
+          echo "REV=${GITHUB_REF_NAME#v}" >> $GITHUB_ENV
+          echo "rev=${GITHUB_REF_NAME#v}" >> $GITHUB_OUTPUT
+
       - name: Build all modules with tag version
         run: |
-          REV=${GITHUB_REF_NAME#v}
           echo "Using revision: $REV"
           mvn -B -DskipTests -Drevision="$REV" clean package
 
@@ -50,7 +55,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          REV=${GITHUB_REF_NAME#v}
           mvn -B -DskipTests -Drevision="$REV" -pl pcg-model,pgc-render -am deploy
 
       - name: Create GitHub Release and upload CLI jar
@@ -61,4 +65,4 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            pcg-cli/target/pcg-cli-${{ github.ref_name#v }}.jar
+            pcg-cli/target/pcg-cli-${{ steps.set-rev.outputs.rev }}.jar
