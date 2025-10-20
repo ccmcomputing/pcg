@@ -1,18 +1,8 @@
 package com.philomathery.pcg.model;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-
-@XmlAccessorType(XmlAccessType.FIELD)
 public class Officiator {
-    @XmlElement
     private String name;
-
-    @XmlElement
     private String date;
-
-    @XmlElement
     private String title;
 
     public String getName() { return name; }

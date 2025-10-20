@@ -1,29 +1,11 @@
 package com.philomathery.pcg.model;
 
-import jakarta.xml.bind.annotation.XmlAccessType;
-import jakarta.xml.bind.annotation.XmlAccessorType;
-import jakarta.xml.bind.annotation.XmlElement;
-import jakarta.xml.bind.annotation.XmlRootElement;
-
-@XmlRootElement(name = "certificate")
-@XmlAccessorType(XmlAccessType.FIELD)
 public class Certificate {
-    @XmlElement
     private String year;
-
-    @XmlElement
     private String meet;
-
-    @XmlElement
     private String place;
-
-    @XmlElement
     private String recipient;
-
-    @XmlElement
     private String event;
-
-    @XmlElement
     private Officiator officiator;
 
     public String getYear() { return year; }
