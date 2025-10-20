@@ -1,4 +1,4 @@
-name: Deploy to GitHub Packages
+name: Build, release CLI, and deploy packages
 
 on:
   push:
@@ -7,11 +7,11 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   packages: write
 
 jobs:
-  deploy:
+  build-release-deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -40,31 +40,25 @@ jobs:
           </settings>
           EOF
 
-      - name: Build with tag version
-        working-directory: com.philomathery.pdf.certificate
+      - name: Build all modules with tag version
         run: |
           REV=${GITHUB_REF_NAME#v}
           echo "Using revision: $REV"
           mvn -B -DskipTests -Drevision="$REV" clean package
 
-      - name: Verify Bundle-Version matches project version
-        working-directory: com.philomathery.pdf.certificate
-        run: |
-          REV=${GITHUB_REF_NAME#v}
-          # Trim whitespace/newlines and CRs
-          BUNDLE_VER=$(awk -F': ' '/^Bundle-Version:/{print $2}' target/classes/META-INF/MANIFEST.MF | tr -d '\r' | xargs)
-          REV_TRIM=$(echo "$REV" | tr -d '\r' | xargs)
-          echo "Bundle-Version=$BUNDLE_VER, Project-Version=$REV_TRIM"
-          if [ "$BUNDLE_VER" != "$REV_TRIM" ]; then
-            echo "Bundle-Version does not match project version" >&2
-            exit 1
-          fi
-
-      - name: Deploy artifact to GitHub Packages
-        working-directory: com.philomathery.pdf.certificate
+      - name: Deploy model and renderer to GitHub Packages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          BUNDLE_VER=$(awk -F': ' '/^Bundle-Version:/{print $2}' target/classes/META-INF/MANIFEST.MF | tr -d '\r' | xargs)
-          echo "Deploying with revision (from Bundle-Version): $BUNDLE_VER"
-          mvn -B -DskipTests -Drevision="$BUNDLE_VER" deploy
+          REV=${GITHUB_REF_NAME#v}
+          mvn -B -DskipTests -Drevision="$REV" -pl pcg-model,pgc-render -am deploy
+
+      - name: Create GitHub Release and upload CLI jar
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          files: |
+            pcg-cli/target/pcg-cli-${{ github.ref_name#v }}.jar
