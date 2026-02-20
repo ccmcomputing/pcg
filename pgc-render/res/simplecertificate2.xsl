@@ -17,7 +17,7 @@
 <xsl:stylesheet version="1.1" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:fo="http://www.w3.org/1999/XSL/Format" exclude-result-prefixes="fo">
    <xsl:output method="xml" version="1.0" omit-xml-declaration="no" indent="yes"/>
    <xsl:param name="versionParam" select="'1.0'"/> 
-   <xsl:template match="certificate">
+   <xsl:template match="/">
       <fo:root xmlns:fo="http://www.w3.org/1999/XSL/Format" id="docroot">
          <layout-master-set xmlns="http://www.w3.org/1999/XSL/Format">
             <simple-page-master margin-bottom="0.25in" margin-left="1in" margin-right="1in" margin-top="0.25in" master-name="s1-simple" page-height="8.5in" page-width="11in">
@@ -31,7 +31,12 @@
                </repeatable-page-master-alternatives>
             </page-sequence-master>
          </layout-master-set>
-         <fo:page-sequence id="section_s1" format="" master-reference="s1" initial-page-number="1">
+         <xsl:apply-templates select="certificate | certificates/certificate" />
+      </fo:root>
+   </xsl:template>
+
+   <xsl:template match="certificate">
+         <fo:page-sequence id="section_s1" format="" master-reference="s1">
             <fo:flow flow-name="xsl-region-body">
                <fo:block-container absolute-position="absolute" top="-2cm" left="-2.5cm" width="11in" height="8.5in" background-image="border.jpg">
                   <fo:block/>
@@ -60,7 +65,6 @@
                <xsl:apply-templates select="officiator"/>
             </fo:flow>
          </fo:page-sequence>
-      </fo:root>
    </xsl:template>
    <xsl:template match="officiator">
       <fo:block color="#000000" margin-top="25mm" font-family="ALEX BRUSH" font-weight="normal" font-style="normal" font-size="14.0pt" line-height="100%" space-after="0in" text-indent="0.5in" text-align-last="justify">
