@@ -70,6 +70,35 @@ java -jar /opt/pcg/pcg-cli.jar \
 
 ## Consuming from Maven (GitHub Packages)
 
+## Call the CLI from a Java application
+
+Use `ProcessBuilder` to invoke the CLI jar from your code:
+
+```java
+import java.util.Arrays;
+
+public class RenderWithPcgCli {
+    public static void main(String[] args) throws Exception {
+        ProcessBuilder pb = new ProcessBuilder(
+            "java", "-jar", "/path/to/pcg-cli-<version>.jar",
+            "--xml", "examples/certificate.xml",
+            "--xslt", "styles/simplecertificate2.xsl",
+            "--out", "out/award.pdf",
+            "--conf", "res/fop.xconf"
+        );
+        pb.inheritIO(); // forward stdout/stderr
+        int exit = pb.start().waitFor();
+        if (exit != 0) {
+            throw new RuntimeException("pcg-cli failed with exit code " + exit);
+        }
+    }
+}
+```
+
+Notes:
+- Replace `/path/to/pcg-cli-<version>.jar` with the actual path/version you built or downloaded.
+- You can write to stdout by passing `--out -` and redirecting the process output to a file.
+
 Add the GitHub Packages repository and dependency.
 
 Maven `settings.xml` (credentials required, even for public packages):
