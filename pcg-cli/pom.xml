@@ -7,7 +7,7 @@
   <description>Command-line tool to render certificates to PDF using Apache FOP</description>
 
   <properties>
-    <revision>2.0.0</revision>
+    <revision>2.0.1-SNAPSHOT</revision>
     <maven.compiler.source>21</maven.compiler.source>
     <maven.compiler.target>21</maven.compiler.target>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
